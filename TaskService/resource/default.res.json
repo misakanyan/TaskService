@@ -1,0 +1,85 @@
+{
+	"groups": [
+		{
+			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,chara1_png,chara2_png,chara3_png,3_png,gameconfig_json,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"name": "bg_jpg",
+			"type": "image",
+			"url": "assets/bg.jpg"
+		},
+		{
+			"name": "egret_icon_png",
+			"type": "image",
+			"url": "assets/egret_icon.png"
+		},
+		{
+			"name": "description_json",
+			"type": "json",
+			"url": "config/description.json"
+		},
+		{
+			"name": "1_png",
+			"type": "image",
+			"url": "assets/1.png"
+		},
+		{
+			"name": "2_png",
+			"type": "image",
+			"url": "assets/2.png"
+		},
+		{
+			"name": "chara1_png",
+			"type": "image",
+			"url": "assets/chara/chara1.png"
+		},
+		{
+			"name": "chara2_png",
+			"type": "image",
+			"url": "assets/chara/chara2.png"
+		},
+		{
+			"name": "chara3_png",
+			"type": "image",
+			"url": "assets/chara/chara3.png"
+		},
+		{
+			"name": "3_png",
+			"type": "image",
+			"url": "assets/3.png"
+		},
+		{
+			"name": "gameconfig_json",
+			"type": "json",
+			"url": "res/gameconfig.json"
+		},
+		{
+			"name": "exclamation_jpg",
+			"type": "image",
+			"url": "assets/exclamation.jpg"
+		},
+		{
+			"name": "question_jpg",
+			"type": "image",
+			"url": "assets/question.jpg"
+		},
+		{
+			"name": "empty_png",
+			"type": "image",
+			"url": "assets/empty.png"
+		},
+		{
+			"name": "npc_0_png",
+			"type": "image",
+			"url": "assets/npc_0.png"
+		},
+		{
+			"name": "npc_1_png",
+			"type": "image",
+			"url": "assets/npc_1.png"
+		}
+	]
+}
