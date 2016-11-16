@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,chara1_png,chara2_png,chara3_png,3_png,gameconfig_json,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png",
+			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,chara1_png,chara2_png,chara3_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json",
 			"name": "preload"
 		}
 	],
@@ -52,11 +52,6 @@
 			"url": "assets/3.png"
 		},
 		{
-			"name": "gameconfig_json",
-			"type": "json",
-			"url": "res/gameconfig.json"
-		},
-		{
 			"name": "exclamation_jpg",
 			"type": "image",
 			"url": "assets/exclamation.jpg"
@@ -80,6 +75,11 @@
 			"name": "npc_1_png",
 			"type": "image",
 			"url": "assets/npc_1.png"
+		},
+		{
+			"name": "gameconfig_json",
+			"type": "json",
+			"url": "config/gameconfig.json"
 		}
 	]
 }

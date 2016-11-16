@@ -1,7 +1,7 @@
 {
     "tasks":[
         {"id":"0","name":"找到莉兹和艾基尔","status":1,"desc":"点击莉兹接受任务，点击艾基尔完成任务。","fromNpcId":"npc_0","toNpcId":"npc_1"},
-        {"id":"1","name":"获得一张金色大表哥","status":1,"desc":"购买60包，或使用3200奥术之尘。","fromNpcId":"npc_0","toNpcId":"npc_1"}
+        {"id":"1","name":"获得一张金色大表哥","status":0,"desc":"购买60包，或使用3200奥术之尘。","fromNpcId":"npc_0","toNpcId":"npc_1"}
     ],
     "npcs":[
         {"id":"npc_0","name":"rizu","bitmap":"npc_0_png","emoji":0,"x":475,"y":125},
