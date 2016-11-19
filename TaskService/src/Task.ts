@@ -1,4 +1,38 @@
-class Task {
+interface TaskCondition {
+    onAccept(task: Task);
+    onSubmit();
+}
+
+interface TaskConditionContext {
+    current: number;
+    checkStatus();
+}
+
+class NpcTalkTaskCondition implements TaskCondition {
+
+    private static instance;
+
+    public static getInstance() {
+        if (NpcTalkTaskCondition.instance == null) {
+            NpcTalkTaskCondition.instance = new NpcTalkTaskCondition;
+        }
+        return NpcTalkTaskCondition.instance;
+    }
+
+    onAccept(task: TaskConditionContext) {
+        task.current++;
+        NPCManager.getInstance().changeDialog();
+        task.checkStatus();
+    }
+
+
+    onSubmit() {
+
+    }
+}
+
+
+class Task implements TaskConditionContext {
 
     private _id: string;
     private _name: string;
@@ -7,13 +41,31 @@ class Task {
     public fromNpcId: string;
     public toNpcId: string;
 
-    constructor(id: string, name: string, status: TaskStatus, desc: string, fromNpcId: string, toNpcId: string) {
+    public current: number = 0;
+    public total: number = -1;
+
+    public condition: TaskCondition;
+
+
+    constructor(id: string,
+        name: string,
+        status: TaskStatus,
+        desc: string,
+        fromNpcId: string,
+        toNpcId: string,
+        condition: TaskCondition,
+        current: number,
+        total: number
+    ) {
         this._id = id;
         this._name = name;
         this._status = status;
         this._desc = desc;
         this.fromNpcId = fromNpcId;
         this.toNpcId = toNpcId;
+        this.condition = condition;
+        this.current = current;
+        this.total = total;
     }
 
     public get id(): string {
@@ -36,6 +88,25 @@ class Task {
         return this._desc;
     }
 
+    public onAccept() {
+        this.condition.onAccept(this);
+    }
+
+    public checkStatus() {
+        //if(this.current > this.total){
+        //    console.warn();
+        //}
+        //console.log("current: " + this.current);
+        if (this._status == TaskStatus.DURING &&
+            this.current >= this.total+1) {  //不加1对话的最后一句会被吞掉
+            this._status = TaskStatus.CAN_SUBMIT;
+            //console.log(this._status);
+            TaskService.getInstance().submit(this._id);
+            NPCManager.getInstance().closeDialog();
+            console.log("submitted");
+        }
+    }
+
 }
 
 class TaskService {
@@ -44,8 +115,8 @@ class TaskService {
     public taskList: Task[] = [];
     private static instance;
 
-    public static getInstance(){
-        if(TaskService.instance == null){
+    public static getInstance() {
+        if (TaskService.instance == null) {
             TaskService.instance = new TaskService;
         }
         return TaskService.instance;
@@ -59,16 +130,26 @@ class TaskService {
     private initTask() {
         var data = RES.getRes("gameconfig_json");
         for (var i = 0; i < data.tasks.length; i++) {
-            var task: Task = new Task(data.tasks[i].id, data.tasks[i].name, data.tasks[i].status, data.tasks[i].desc, data.tasks[i].fromNpcId, data.tasks[i].toNpcId);
+
+            var task: Task = new Task(data.tasks[i].id,
+                data.tasks[i].name,
+                data.tasks[i].status,
+                data.tasks[i].desc,
+                data.tasks[i].fromNpcId,
+                data.tasks[i].toNpcId,
+                NpcTalkTaskCondition.getInstance(),
+                data.tasks[i].current,
+                data.tasks[i].total
+            );
             this.taskList.push(task);
         }
     }
 
     private initObserver() {
 
-        NPCManager.init();
-        for (var i: number = 0; i < NPCManager.NPCList.length; i++) {
-            this.observerList.push(NPCManager.NPCList[i]);
+        NPCManager.getInstance().init();
+        for (var i: number = 0; i < NPCManager.getInstance().NPCList.length; i++) {
+            this.observerList.push(NPCManager.getInstance().NPCList[i]);
         }
 
     }
@@ -97,6 +178,7 @@ class TaskService {
         //console.log(TaskStatus.DURING);
         if (task.status == TaskStatus.ACCEPTABLE) {
             task.status = TaskStatus.DURING;
+            task.onAccept();
             console.log('accept:' + id);
         }
         this.notify(task);
@@ -113,7 +195,7 @@ class TaskService {
             return ErrorCode.MISSING_TASK;
         }
         if (task.status == TaskStatus.DURING) {
-            task.status = TaskStatus.CAN_SUMBIT;
+            task.status = TaskStatus.CAN_SUBMIT;
             console.log('complete:' + id);
         }
         this.notify(task);
@@ -128,15 +210,15 @@ class TaskService {
         if (!task) {
             return ErrorCode.MISSING_TASK;
         }
-        //console.log('finish:' + id);
-        if (task.status == TaskStatus.CAN_SUMBIT) {
+        //console.log('submit task:' + id);
+        if (task.status == TaskStatus.CAN_SUBMIT) {
             task.status = TaskStatus.SUBMITTED;
-            console.log('submit:' + id);
+            //console.log('submit:' + id);
         }
         this.notify(task);
     }
 
-    getTaskByCustomRole(rule:Function): Task[] {
+    getTaskByCustomRole(rule: Function): Task[] {
         var task: Task[] = [];
         var npcId = rule();
         for (var i: number = 0; i < this.taskList.length; i++) {
@@ -160,7 +242,7 @@ enum TaskStatus {
     UNACCEPTABLE,
     ACCEPTABLE,
     DURING,
-    CAN_SUMBIT,
+    CAN_SUBMIT,
     SUBMITTED
 
 }
@@ -233,7 +315,7 @@ class TaskTextElement extends egret.DisplayObjectContainer {
         this.taskNameText.text = "任务 : " + task.name;
         this.taskStatusText.text = "当前状态 : " + ChineseTaskStatus[task.status];
         this.taskDescText.text = task.desc;
-        console.log("panel taskinfo change success");
+        //console.log("panel taskinfo change success");
     }
 
     public get taskId(): string {
@@ -261,7 +343,7 @@ class TaskPanel extends egret.DisplayObjectContainer implements Observer {
         for (var i: number = 0; i < TaskService.getInstance().taskList.length; i++) {
             var taskText = new TaskTextElement(TaskService.getInstance().taskList[i].id, TaskService.getInstance().taskList[i].name, TaskService.getInstance().taskList[i].status, TaskService.getInstance().taskList[i].desc);
             this.taskTextList.push(taskText);
-            this.taskTextList[i].y = i*100;
+            this.taskTextList[i].y = i * 100;
             this.addChild(taskText);
         }
     }
@@ -278,26 +360,124 @@ class TaskPanel extends egret.DisplayObjectContainer implements Observer {
 
 class DialogPanel extends egret.DisplayObjectContainer {
 
-    private desc: egret.TextField = new egret.TextField;
-    button: egret.Shape = new egret.Shape;
+    charaName: egret.TextField = new egret.TextField;
+    desc: egret.TextField = new egret.TextField;
+    bg: egret.Bitmap = new egret.Bitmap;
+    dialogue: any[] = [];
+    dialogueCount: number = 0;
+    dialogueTotal: number = 0;
+    tachie_left:egret.Bitmap = new egret.Bitmap;
+    tachie_right:egret.Bitmap = new egret.Bitmap;
+    //button: egret.Shape = new egret.Shape;
+    private currentTaskId: string = "-1";
+
+
 
     constructor() {
         super();
 
-        this.button.x = 0;
-        this.button.y = 0;
+        /*this.button.x = 250;
+        this.button.y = 250;
         this.button.graphics.clear();
         this.button.graphics.beginFill(0x000000, 1.0);
         this.button.graphics.drawRect(0, 0, 50, 30);
-        this.button.graphics.endFill();
-        this.addChild(this.button);
+        this.button.graphics.endFill();  */
+        this.bg.texture = RES.getRes("dialog_png");
+        this.bg.x = 0;
+        this.bg.y = 0;
+
+        this.tachie_left.texture = RES.getRes("npc_1_tachie_jpg");
+        this.tachie_left.x = 0;
+        this.tachie_left.y = 250;
+        this.tachie_left.width = 200;
+        this.tachie_left.height = 250;
+
+        this.tachie_right.texture = RES.getRes("npc_0_tachie_jpg");
+        this.tachie_right.x = 300;
+        this.tachie_right.y = 250;
+        this.tachie_right.width = 200;
+        this.tachie_right.height = 250;
 
         this.desc.text = "确定";
-        this.desc.size = 14;
+        this.desc.size = 16;
         this.desc.fontFamily = "微软雅黑";
-        this.desc.x = 0;
-        this.desc.y = 0;
+        this.desc.x = 75;
+        this.desc.y = 420;
+        this.desc.width = 300;
+        this.desc.height = 50;
+        this.desc.textAlign = egret.HorizontalAlign.LEFT;
+        this.desc.type = egret.TextFieldType.DYNAMIC;
+        this.desc.lineSpacing = 6;
+        this.desc.multiline = true;
+
+        this.charaName.text = "Lizbeth";
+        this.charaName.size = 18;
+        this.charaName.fontFamily = "微软雅黑";
+        this.charaName.anchorOffsetX = this.charaName.width / 2;
+        this.charaName.anchorOffsetY = this.charaName.height / 2;
+        this.charaName.x = 128;
+        this.charaName.y = 394;
+
+        this.anchorOffsetX = this.width / 2;
+        this.anchorOffsetY = this.height / 2;
+        //this.x = 250;
+        //this.y = 250;
+        //console.log("Dialog Panel button x: "+this.button.x+"y: "+this.button.y);
+
+        this.touchEnabled = true;
+        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onClick, this);
+
+    }
+
+    onAwake(taskId) {
+        this.currentTaskId = taskId;
+        var data = RES.getRes("dialogue_json");
+        for (var i: number = 0; i < data.dialogue.length; i++) {
+            if(data.dialogue[i].taskId == taskId){
+                this.dialogue.push(data.dialogue[i]);
+                this.dialogueTotal++;
+            }
+        }
+        this.onChange();
+        this.addChild(this.bg);
         this.addChild(this.desc);
+        this.addChild(this.charaName);
+        this.addChild(this.tachie_left);
+        this.addChild(this.tachie_right);
+        //console.log("DialogPanel onAwake by task: "+ taskId);
+    }
+
+    onChange() {
+        if (this.dialogueTotal == 0) {
+            console.log("未传入dialogueTotal参数");
+        } else if (this.dialogueCount < this.dialogueTotal) {
+            this.charaName.text = this.dialogue[this.dialogueCount].actorName;
+            this.desc.text = this.dialogue[this.dialogueCount].content;
+            if(this.dialogue[this.dialogueCount].side == "left"){
+                this.tachie_left.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
+            }else if(this.dialogue[this.dialogueCount].side == "right"){
+                this.tachie_right.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
+            }
+            this.dialogueCount++;
+        }
+    }
+
+    onSleep() {
+        this.removeChild(this.bg);
+        this.removeChild(this.desc);
+        this.removeChild(this.charaName);
+        this.removeChild(this.tachie_left);
+        this.removeChild(this.tachie_right);
+    }
+
+    private onClick() {
+        //console.log("onclick");
+        if (this.currentTaskId == "-1") {
+            console.log("no task on dialogPanel");
+        } else {
+            let task = TaskService.getInstance().taskList[this.currentTaskId];
+            task.onAccept();
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,chara1_png,chara2_png,chara3_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json",
+			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json,npc_1_tachie_jpg,npc_0_tachie_jpg,dialog_png,dialogue_json",
 			"name": "preload"
 		}
 	],
@@ -30,21 +30,6 @@
 			"name": "2_png",
 			"type": "image",
 			"url": "assets/2.png"
-		},
-		{
-			"name": "chara1_png",
-			"type": "image",
-			"url": "assets/chara/chara1.png"
-		},
-		{
-			"name": "chara2_png",
-			"type": "image",
-			"url": "assets/chara/chara2.png"
-		},
-		{
-			"name": "chara3_png",
-			"type": "image",
-			"url": "assets/chara/chara3.png"
 		},
 		{
 			"name": "3_png",
@@ -80,6 +65,26 @@
 			"name": "gameconfig_json",
 			"type": "json",
 			"url": "config/gameconfig.json"
+		},
+		{
+			"name": "npc_1_tachie_jpg",
+			"type": "image",
+			"url": "assets/npc_1_tachie.jpg"
+		},
+		{
+			"name": "npc_0_tachie_jpg",
+			"type": "image",
+			"url": "assets/npc_0_tachie.jpg"
+		},
+		{
+			"name": "dialog_png",
+			"type": "image",
+			"url": "assets/dialog.png"
+		},
+		{
+			"name": "dialogue_json",
+			"type": "json",
+			"url": "config/dialogue.json"
 		}
 	]
 }

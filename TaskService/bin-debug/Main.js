@@ -96,20 +96,23 @@ var Main = (function (_super) {
             this.loadingView.setProgress(event.itemsLoaded, event.itemsTotal);
         }
     };
+    //private textfield: egret.TextField;
     /**
      * 创建游戏场景
      * Create a game scene
      */
     p.createGameScene = function () {
         TaskService.getInstance().init();
-        for (var i = 0; i < NPCManager.NPCList.length; i++) {
-            this.addChild(NPCManager.NPCList[i]);
+        for (var i = 0; i < NPCManager.getInstance().NPCList.length; i++) {
+            this.addChild(NPCManager.getInstance().NPCList[i]);
         }
         var panel = new TaskPanel();
         panel.x = 0;
         panel.y = 0;
         this.addChild(panel);
         TaskService.getInstance().addObserver(panel);
+        //var p:DialogPanel = new DialogPanel();
+        this.addChild(NPCManager.getInstance().dialog);
     };
     p.createBitmapByName = function (name) {
         var result = new egret.Bitmap();

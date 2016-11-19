@@ -110,7 +110,7 @@ class Main extends egret.DisplayObjectContainer {
         }
     }
 
-    private textfield: egret.TextField;
+    //private textfield: egret.TextField;
 
     /**
      * 创建游戏场景
@@ -118,9 +118,9 @@ class Main extends egret.DisplayObjectContainer {
      */
     private createGameScene(): void {
 
-        TaskService.getInstance().init();
-        for(var i:number = 0;i<NPCManager.NPCList.length;i++){
-            this.addChild(NPCManager.NPCList[i]);
+       TaskService.getInstance().init();
+        for(var i:number = 0;i<NPCManager.getInstance().NPCList.length;i++){
+            this.addChild(NPCManager.getInstance().NPCList[i]);
         }
 
         var panel = new TaskPanel();
@@ -128,6 +128,9 @@ class Main extends egret.DisplayObjectContainer {
         panel.y = 0;
         this.addChild(panel);
         TaskService.getInstance().addObserver(panel);
+
+        //var p:DialogPanel = new DialogPanel();
+        this.addChild(NPCManager.getInstance().dialog);
 
     }
 

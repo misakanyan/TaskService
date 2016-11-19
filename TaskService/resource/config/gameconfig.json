@@ -1,10 +1,44 @@
 {
-    "tasks":[
-        {"id":"0","name":"找到莉兹和艾基尔","status":1,"desc":"点击莉兹接受任务，点击艾基尔完成任务。","fromNpcId":"npc_0","toNpcId":"npc_1"},
-        {"id":"1","name":"获得一张金色大表哥","status":0,"desc":"购买60包，或使用3200奥术之尘。","fromNpcId":"npc_0","toNpcId":"npc_1"}
+    "tasks": [
+        {
+            "id": "0",
+            "name": "找到莉兹和艾基尔",
+            "status": 1,
+            "desc": "点击莉兹接受任务，点击艾基尔完成任务。",
+            "fromNpcId": "npc_0",
+            "toNpcId": "npc_1",
+            "current": 0,
+            "total": 4
+        },
+        {
+            "id": "1",
+            "name": "获得一张金色大表哥",
+            "status": 0,
+            "desc": "购买60包，或使用3200奥术之尘。",
+            "fromNpcId": "npc_0",
+            "toNpcId": "npc_1",
+            "current": 0,
+            "total": 10
+        }
     ],
-    "npcs":[
-        {"id":"npc_0","name":"rizu","bitmap":"npc_0_png","emoji":0,"x":475,"y":125},
-        {"id":"npc_1","name":"egiru","bitmap":"npc_1_png","emoji":0,"x":25,"y":225}
+    "npcs": [
+        {
+            "id": "npc_0",
+            "name": "Lisbeth",
+            "bitmap": "npc_0_png",
+            "emoji": 0,
+            "tachie": "npc_0_tachie_jpg",
+            "x": 475,
+            "y": 125
+        },
+        {
+            "id": "npc_1",
+            "name": "Agil",
+            "bitmap": "npc_1_png",
+            "emoji": 0,
+            "tachie": "npc_1_tachie_jpg",
+            "x": 25,
+            "y": 225
+        }
     ]
 }

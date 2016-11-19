@@ -1,17 +1,19 @@
 var NPC = (function (_super) {
     __extends(NPC, _super);
-    function NPC(id, name, bitmap, emoji, x, y) {
+    //private dialog: DialogPanel = new DialogPanel();
+    function NPC(id, name, bitmap, emoji, tachie, x, y) {
         var _this = this;
         _super.call(this);
         this._bitmap = new egret.Bitmap;
         this._emoji = new egret.Bitmap;
-        this.dialog = new DialogPanel();
+        this._tachie = new egret.Bitmap;
         this.npcRule = function () {
             return _this._id;
         };
         this._id = id;
         this._name = name;
         this._bitmap.texture = RES.getRes(bitmap);
+        this._tachie.texture = RES.getRes(tachie);
         this.changeEmoji(emoji);
         this.x = x;
         this.y = y;
@@ -19,6 +21,8 @@ var NPC = (function (_super) {
         this._bitmap.y = 0;
         this._bitmap.anchorOffsetX = this._bitmap.width / 2;
         this._bitmap.anchorOffsetY = this._bitmap.height / 2;
+        this._tachie.anchorOffsetX = this._tachie.width / 2;
+        this._tachie.anchorOffsetY = this._tachie.height / 2;
         this._emoji.anchorOffsetX = this._emoji.width / 2;
         this._emoji.anchorOffsetY = this._emoji.height / 2;
         this._emoji.x = this._bitmap.x;
@@ -32,27 +36,9 @@ var NPC = (function (_super) {
         }
         this.addChild(this._bitmap);
         this.addChild(this._emoji);
+        //this.addChild(this._tachie);
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onClick, this);
         this.touchEnabled = true;
-        this.dialog.anchorOffsetX = this.dialog.width / 2;
-        this.dialog.anchorOffsetY = this.dialog.height / 2;
-        this.dialog.x = -(this._bitmap.width) / 2;
-        this.dialog.y = 50;
-        this.dialog.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
-            console.log("onclick");
-            for (var i = 0; i < _this._taskList.length; i++) {
-                if (_this._taskList[i].fromNpcId == _this._id) {
-                    TaskService.getInstance().accept(_this._taskList[i].id);
-                }
-                else if (_this._taskList[i].toNpcId == _this.id) {
-                    TaskService.getInstance().complete(_this._taskList[i].id);
-                    TaskService.getInstance().submit(_this._taskList[i].id);
-                }
-                //this.removeChild(this.dialog); //报错 提供的displayobject必须是调用者的子级 dialog的监听器位置需要修改
-                _this.dialog.visible = false;
-            }
-        }, this);
-        this.dialog.touchEnabled = true;
         //console.log("this:"+this.x+","+this.y);
         //console.log("bitmap:"+this._bitmap.x+","+this._bitmap.y);
         //console.log("emoji:"+this._emoji.x+","+this._emoji.y);
@@ -67,8 +53,9 @@ var NPC = (function (_super) {
         if (this._taskList.length > 0) {
             for (var i = 0; i < this._taskList.length; i++) {
                 if (task == this._taskList[i]) {
-                    console.log("accept task fromNpcId:" + task.fromNpcId + " status:" + task.status);
-                    console.log("accept task fromNpcId:" + this._id + " status:" + TaskStatus.DURING);
+                    //console.log("accept task fromNpcId:" + task.fromNpcId + " status:" + task.status);
+                    //console.log("accept task fromNpcId:" + this._id + " status:" + TaskStatus.DURING);
+                    this._taskList[i].status = task.status;
                     if (task.fromNpcId == this._id && task.status == TaskStatus.DURING) {
                         this.changeEmoji(EmojiStatus.EMPTY);
                     }
@@ -98,7 +85,14 @@ var NPC = (function (_super) {
         }
     };
     p.onClick = function () {
-        this.addChild(this.dialog);
+        for (var i = 0; i < this._taskList.length; i++) {
+            console.log("taskId: " + this._taskList[i].id + " status: " + this._taskList[i].status);
+            if (this._taskList[i].status == TaskStatus.ACCEPTABLE) {
+                TaskService.getInstance().accept(this._taskList[i].id);
+                NPCManager.getInstance().openDialog(this._taskList[i].id);
+                break;
+            }
+        }
     };
     return NPC;
 }(egret.DisplayObjectContainer));
@@ -111,16 +105,34 @@ var EmojiStatus;
 })(EmojiStatus || (EmojiStatus = {}));
 var NPCManager = (function () {
     function NPCManager() {
+        this.NPCList = [];
+        this.dialog = new DialogPanel();
     }
     var d = __define,c=NPCManager,p=c.prototype;
-    NPCManager.init = function () {
+    NPCManager.getInstance = function () {
+        if (NPCManager.instance == null) {
+            NPCManager.instance = new NPCManager;
+        }
+        return NPCManager.instance;
+    };
+    p.init = function () {
+        //this.dialog = new DialogPanel();
         var data = RES.getRes("gameconfig_json");
         for (var i = 0; i < data.npcs.length; i++) {
-            var npc = new NPC(data.npcs[i].id, data.npcs[i].name, data.npcs[i].bitmap, data.npcs[i].emoji, data.npcs[i].x, data.npcs[i].y);
+            var npc = new NPC(data.npcs[i].id, data.npcs[i].name, data.npcs[i].bitmap, data.npcs[i].emoji, data.npcs[i].tachie, data.npcs[i].x, data.npcs[i].y);
             this.NPCList.push(npc);
         }
     };
-    NPCManager.NPCList = [];
+    p.openDialog = function (taskId) {
+        this.dialog.onAwake(taskId);
+        console.log("NPCManager onClick");
+    };
+    p.changeDialog = function () {
+        this.dialog.onChange();
+    };
+    p.closeDialog = function () {
+        this.dialog.onSleep();
+    };
     return NPCManager;
 }());
 egret.registerClass(NPCManager,'NPCManager');
