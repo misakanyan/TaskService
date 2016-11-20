@@ -386,17 +386,18 @@ class DialogPanel extends egret.DisplayObjectContainer {
         this.bg.x = 0;
         this.bg.y = 0;
 
-        this.tachie_left.texture = RES.getRes("npc_1_tachie_jpg");
+        //this.tachie_left.texture = RES.getRes("npc_1_tachie_png");
         this.tachie_left.x = 0;
-        this.tachie_left.y = 250;
-        this.tachie_left.width = 200;
-        this.tachie_left.height = 250;
+        this.tachie_left.y = 0;
+        //this.tachie_left.width = 200;
+        //this.tachie_left.height = 250;
 
-        this.tachie_right.texture = RES.getRes("npc_0_tachie_jpg");
-        this.tachie_right.x = 300;
-        this.tachie_right.y = 250;
-        this.tachie_right.width = 200;
-        this.tachie_right.height = 250;
+        this.tachie_right.texture = RES.getRes("npc_0_tachie_png");
+        this.tachie_right.x = 0;
+        this.tachie_right.y = 0;
+        //this.addChild(this.tachie_right);
+        //this.tachie_right.width = 200;
+        //this.tachie_right.height = 250;
 
         this.desc.text = "确定";
         this.desc.size = 16;
@@ -439,24 +440,26 @@ class DialogPanel extends egret.DisplayObjectContainer {
             }
         }
         this.onChange();
+        this.addChild(this.tachie_left);
+        this.addChild(this.tachie_right);
         this.addChild(this.bg);
         this.addChild(this.desc);
         this.addChild(this.charaName);
-        this.addChild(this.tachie_left);
-        this.addChild(this.tachie_right);
         //console.log("DialogPanel onAwake by task: "+ taskId);
     }
 
     onChange() {
         if (this.dialogueTotal == 0) {
-            console.log("未传入dialogueTotal参数");
+            //console.log("未传入dialogueTotal参数");
         } else if (this.dialogueCount < this.dialogueTotal) {
             this.charaName.text = this.dialogue[this.dialogueCount].actorName;
             this.desc.text = this.dialogue[this.dialogueCount].content;
             if(this.dialogue[this.dialogueCount].side == "left"){
                 this.tachie_left.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
+                this.tachie_right.texture = null;
             }else if(this.dialogue[this.dialogueCount].side == "right"){
                 this.tachie_right.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
+                this.tachie_left.texture = null;
             }
             this.dialogueCount++;
         }
@@ -468,6 +471,9 @@ class DialogPanel extends egret.DisplayObjectContainer {
         this.removeChild(this.charaName);
         this.removeChild(this.tachie_left);
         this.removeChild(this.tachie_right);
+        this.dialogue = [];
+        this.dialogueCount = 0;
+        this.dialogueTotal = 0;
     }
 
     private onClick() {

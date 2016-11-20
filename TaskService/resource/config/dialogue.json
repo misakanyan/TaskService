@@ -3,7 +3,7 @@
         {
             "id": 1,
             "actorName": "Lisbeth",
-            "tachie:": "npc_0_tachie_jpg",
+            "tachie": "npc_0_tachie_png",
             "side": "right",
             "taskId": 0,
             "content": "艾基尔，龙血药剂不够了，你那儿还有存货吗？"
@@ -11,7 +11,7 @@
         {
             "id": 2,
             "actorName": "Agil",
-            "tachie:": "npc_1_tachie_jpg",
+            "tachie": "npc_1_tachie_png",
             "side": "left",
             "taskId": 0,
             "content": "真不凑巧，刚卖完……不过我下午要去一趟西山，顺便帮你打点回来吧。"
@@ -19,7 +19,7 @@
         {
             "id": 3,
             "actorName": "Lisbeth",
-            "tachie:": "npc_0_tachie_jpg",
+            "tachie": "npc_0_tachie_png",
             "side": "right",
             "taskId": 0,
             "content": "喔~那不是最前线的55层吗？你这个整天挥舞大锤的商人没问题吗？"
@@ -27,7 +27,7 @@
         {
             "id": 4,
             "actorName": "Agil",
-            "tachie:": "npc_1_tachie_jpg",
+            "tachie": "npc_1_tachie_png",
             "side": "left",
             "taskId": 0,
             "content": "不是大锤，是巨斧，别小瞧我啊。"

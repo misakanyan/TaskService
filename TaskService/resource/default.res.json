@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json,npc_1_tachie_jpg,npc_0_tachie_jpg,dialog_png,dialogue_json",
+			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json,npc_1_tachie_png,npc_0_tachie_png,dialog_png,dialogue_json",
 			"name": "preload"
 		}
 	],
@@ -67,14 +67,14 @@
 			"url": "config/gameconfig.json"
 		},
 		{
-			"name": "npc_1_tachie_jpg",
+			"name": "npc_1_tachie_png",
 			"type": "image",
-			"url": "assets/npc_1_tachie.jpg"
+			"url": "assets/npc_1_tachie.png"
 		},
 		{
-			"name": "npc_0_tachie_jpg",
+			"name": "npc_0_tachie_png",
 			"type": "image",
-			"url": "assets/npc_0_tachie.jpg"
+			"url": "assets/npc_0_tachie.png"
 		},
 		{
 			"name": "dialog_png",
