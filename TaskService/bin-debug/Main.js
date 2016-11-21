@@ -103,8 +103,12 @@ var Main = (function (_super) {
      */
     p.createGameScene = function () {
         TaskService.getInstance().init();
+        SceneService.getInstance().init();
         for (var i = 0; i < NPCManager.getInstance().NPCList.length; i++) {
             this.addChild(NPCManager.getInstance().NPCList[i]);
+        }
+        for (var i = 0; i < SceneService.getInstance().monsterList.length; i++) {
+            this.addChild(SceneService.getInstance().monsterList[i]);
         }
         var panel = new TaskPanel();
         panel.x = 0;

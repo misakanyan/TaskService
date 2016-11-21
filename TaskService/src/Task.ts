@@ -6,6 +6,7 @@ interface TaskCondition {
 interface TaskConditionContext {
     current: number;
     checkStatus();
+    killMonsterCheckStatus();
 }
 
 class NpcTalkTaskCondition implements TaskCondition {
@@ -28,6 +29,31 @@ class NpcTalkTaskCondition implements TaskCondition {
 
     onSubmit() {
 
+    }
+}
+
+class KillMonsterTaskCondition implements TaskCondition, SceneObserver {
+    private static instance;
+
+    public static getInstance() {
+        if (KillMonsterTaskCondition.instance == null) {
+            KillMonsterTaskCondition.instance = new KillMonsterTaskCondition;
+        }
+        return KillMonsterTaskCondition.instance;
+    }
+
+    onAccept(task: TaskConditionContext) {
+        task.current++;
+        task.killMonsterCheckStatus();
+    }
+
+
+    onSubmit() {
+
+    }
+
+    onChange(task: Task) {
+        this.onAccept(task);
     }
 }
 
@@ -98,11 +124,24 @@ class Task implements TaskConditionContext {
         //}
         //console.log("current: " + this.current);
         if (this._status == TaskStatus.DURING &&
-            this.current >= this.total+1) {  //不加1对话的最后一句会被吞掉
+            this.current >= this.total + 1) {  //不加1对话的最后一句会被吞掉
             this._status = TaskStatus.CAN_SUBMIT;
             //console.log(this._status);
             TaskService.getInstance().submit(this._id);
+            TaskService.getInstance().enforceAccept("1"); //临时代码 用于启动下一个任务
+            SceneService.getInstance().wakeUpMonster("0") //临时代码 用于唤醒怪物
             NPCManager.getInstance().closeDialog();
+            console.log("submitted");
+        }
+    }
+
+    public killMonsterCheckStatus() {
+        if (this._status == TaskStatus.DURING &&
+            this.current >= this.total + 1) {  //不加1对话的最后一句会被吞掉
+            this._status = TaskStatus.CAN_SUBMIT;
+            //console.log(this._status);
+            TaskService.getInstance().submit(this._id);
+            SceneService.getInstance().killMonster("0");//临时代码 用于清除怪物
             console.log("submitted");
         }
     }
@@ -130,14 +169,15 @@ class TaskService {
     private initTask() {
         var data = RES.getRes("gameconfig_json");
         for (var i = 0; i < data.tasks.length; i++) {
-
+            var taskType = data.tasks[i].type == "dialog" ? NpcTalkTaskCondition.getInstance() : KillMonsterTaskCondition.getInstance();
             var task: Task = new Task(data.tasks[i].id,
                 data.tasks[i].name,
                 data.tasks[i].status,
                 data.tasks[i].desc,
                 data.tasks[i].fromNpcId,
                 data.tasks[i].toNpcId,
-                NpcTalkTaskCondition.getInstance(),
+                taskType,
+                //NpcTalkTaskCondition.getInstance(),
                 data.tasks[i].current,
                 data.tasks[i].total
             );
@@ -164,6 +204,16 @@ class TaskService {
         }
     }
 
+    enforceAccept(id: string) {
+        let task = this.taskList[id];
+        if (task.status == TaskStatus.UNACCEPTABLE) {
+            task.status = TaskStatus.DURING;
+            task.onAccept();
+            console.log('enforce accept:' + id);
+            console.log("enforce accept status: " + this.taskList[id]._status);
+        }
+        this.notify(task);
+    }
 
     accept(id: string) {
         if (!id) {
@@ -180,6 +230,7 @@ class TaskService {
             task.status = TaskStatus.DURING;
             task.onAccept();
             console.log('accept:' + id);
+            console.log("accept status: " + this.taskList[id]._status);
         }
         this.notify(task);
 
@@ -197,6 +248,7 @@ class TaskService {
         if (task.status == TaskStatus.DURING) {
             task.status = TaskStatus.CAN_SUBMIT;
             console.log('complete:' + id);
+
         }
         this.notify(task);
     }
@@ -213,7 +265,8 @@ class TaskService {
         //console.log('submit task:' + id);
         if (task.status == TaskStatus.CAN_SUBMIT) {
             task.status = TaskStatus.SUBMITTED;
-            //console.log('submit:' + id);
+            console.log('submit:' + id);
+            console.log("submit status: " + this.taskList[id]._status);
         }
         this.notify(task);
     }
@@ -366,8 +419,8 @@ class DialogPanel extends egret.DisplayObjectContainer {
     dialogue: any[] = [];
     dialogueCount: number = 0;
     dialogueTotal: number = 0;
-    tachie_left:egret.Bitmap = new egret.Bitmap;
-    tachie_right:egret.Bitmap = new egret.Bitmap;
+    tachie_left: egret.Bitmap = new egret.Bitmap;
+    tachie_right: egret.Bitmap = new egret.Bitmap;
     //button: egret.Shape = new egret.Shape;
     private currentTaskId: string = "-1";
 
@@ -434,7 +487,7 @@ class DialogPanel extends egret.DisplayObjectContainer {
         this.currentTaskId = taskId;
         var data = RES.getRes("dialogue_json");
         for (var i: number = 0; i < data.dialogue.length; i++) {
-            if(data.dialogue[i].taskId == taskId){
+            if (data.dialogue[i].taskId == taskId) {
                 this.dialogue.push(data.dialogue[i]);
                 this.dialogueTotal++;
             }
@@ -454,10 +507,10 @@ class DialogPanel extends egret.DisplayObjectContainer {
         } else if (this.dialogueCount < this.dialogueTotal) {
             this.charaName.text = this.dialogue[this.dialogueCount].actorName;
             this.desc.text = this.dialogue[this.dialogueCount].content;
-            if(this.dialogue[this.dialogueCount].side == "left"){
+            if (this.dialogue[this.dialogueCount].side == "left") {
                 this.tachie_left.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
                 this.tachie_right.texture = null;
-            }else if(this.dialogue[this.dialogueCount].side == "right"){
+            } else if (this.dialogue[this.dialogueCount].side == "right") {
                 this.tachie_right.texture = RES.getRes(this.dialogue[this.dialogueCount].tachie);
                 this.tachie_left.texture = null;
             }
@@ -494,4 +547,5 @@ var ChineseTaskStatus = {
     3: "可提交",
     4: "已提交"
 }
+
 

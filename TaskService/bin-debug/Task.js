@@ -18,6 +18,28 @@ var NpcTalkTaskCondition = (function () {
     return NpcTalkTaskCondition;
 }());
 egret.registerClass(NpcTalkTaskCondition,'NpcTalkTaskCondition',["TaskCondition"]);
+var KillMonsterTaskCondition = (function () {
+    function KillMonsterTaskCondition() {
+    }
+    var d = __define,c=KillMonsterTaskCondition,p=c.prototype;
+    KillMonsterTaskCondition.getInstance = function () {
+        if (KillMonsterTaskCondition.instance == null) {
+            KillMonsterTaskCondition.instance = new KillMonsterTaskCondition;
+        }
+        return KillMonsterTaskCondition.instance;
+    };
+    p.onAccept = function (task) {
+        task.current++;
+        task.killMonsterCheckStatus();
+    };
+    p.onSubmit = function () {
+    };
+    p.onChange = function (task) {
+        this.onAccept(task);
+    };
+    return KillMonsterTaskCondition;
+}());
+egret.registerClass(KillMonsterTaskCondition,'KillMonsterTaskCondition',["TaskCondition","SceneObserver"]);
 var Task = (function () {
     function Task(id, name, status, desc, fromNpcId, toNpcId, condition, current, total) {
         this.current = 0;
@@ -69,7 +91,19 @@ var Task = (function () {
             this._status = TaskStatus.CAN_SUBMIT;
             //console.log(this._status);
             TaskService.getInstance().submit(this._id);
+            TaskService.getInstance().enforceAccept("1"); //临时代码 用于启动下一个任务
+            SceneService.getInstance().wakeUpMonster("0"); //临时代码 用于唤醒怪物
             NPCManager.getInstance().closeDialog();
+            console.log("submitted");
+        }
+    };
+    p.killMonsterCheckStatus = function () {
+        if (this._status == TaskStatus.DURING &&
+            this.current >= this.total + 1) {
+            this._status = TaskStatus.CAN_SUBMIT;
+            //console.log(this._status);
+            TaskService.getInstance().submit(this._id);
+            SceneService.getInstance().killMonster("0"); //临时代码 用于清除怪物
             console.log("submitted");
         }
     };
@@ -95,7 +129,10 @@ var TaskService = (function () {
     p.initTask = function () {
         var data = RES.getRes("gameconfig_json");
         for (var i = 0; i < data.tasks.length; i++) {
-            var task = new Task(data.tasks[i].id, data.tasks[i].name, data.tasks[i].status, data.tasks[i].desc, data.tasks[i].fromNpcId, data.tasks[i].toNpcId, NpcTalkTaskCondition.getInstance(), data.tasks[i].current, data.tasks[i].total);
+            var taskType = data.tasks[i].type == "dialog" ? NpcTalkTaskCondition.getInstance() : KillMonsterTaskCondition.getInstance();
+            var task = new Task(data.tasks[i].id, data.tasks[i].name, data.tasks[i].status, data.tasks[i].desc, data.tasks[i].fromNpcId, data.tasks[i].toNpcId, taskType, 
+            //NpcTalkTaskCondition.getInstance(),
+            data.tasks[i].current, data.tasks[i].total);
             this.taskList.push(task);
         }
     };
@@ -113,6 +150,16 @@ var TaskService = (function () {
             this.observerList[i].onChange(task);
         }
     };
+    p.enforceAccept = function (id) {
+        var task = this.taskList[id];
+        if (task.status == TaskStatus.UNACCEPTABLE) {
+            task.status = TaskStatus.DURING;
+            task.onAccept();
+            console.log('enforce accept:' + id);
+            console.log("enforce accept status: " + this.taskList[id]._status);
+        }
+        this.notify(task);
+    };
     p.accept = function (id) {
         if (!id) {
             return ErrorCode.MISSING_TASK;
@@ -128,6 +175,7 @@ var TaskService = (function () {
             task.status = TaskStatus.DURING;
             task.onAccept();
             console.log('accept:' + id);
+            console.log("accept status: " + this.taskList[id]._status);
         }
         this.notify(task);
     };
@@ -156,6 +204,8 @@ var TaskService = (function () {
         //console.log('submit task:' + id);
         if (task.status == TaskStatus.CAN_SUBMIT) {
             task.status = TaskStatus.SUBMITTED;
+            console.log('submit:' + id);
+            console.log("submit status: " + this.taskList[id]._status);
         }
         this.notify(task);
     };

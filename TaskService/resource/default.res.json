@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json,npc_1_tachie_png,npc_0_tachie_png,dialog_png,dialogue_json",
+			"keys": "bg_jpg,egret_icon_png,description_json,1_png,2_png,3_png,exclamation_jpg,question_jpg,empty_png,npc_0_png,npc_1_png,gameconfig_json,npc_1_tachie_png,npc_0_tachie_png,dialog_png,dialogue_json,monster_jpg",
 			"name": "preload"
 		}
 	],
@@ -85,6 +85,11 @@
 			"name": "dialogue_json",
 			"type": "json",
 			"url": "config/dialogue.json"
+		},
+		{
+			"name": "monster_jpg",
+			"type": "image",
+			"url": "assets/monster.jpg"
 		}
 	]
 }

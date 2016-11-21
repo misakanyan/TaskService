@@ -118,9 +118,13 @@ class Main extends egret.DisplayObjectContainer {
      */
     private createGameScene(): void {
 
-       TaskService.getInstance().init();
-        for(var i:number = 0;i<NPCManager.getInstance().NPCList.length;i++){
+        TaskService.getInstance().init();
+        SceneService.getInstance().init();
+        for (var i: number = 0; i < NPCManager.getInstance().NPCList.length; i++) {
             this.addChild(NPCManager.getInstance().NPCList[i]);
+        }
+        for (var i: number = 0; i < SceneService.getInstance().monsterList.length; i++) {
+            this.addChild(SceneService.getInstance().monsterList[i]);
         }
 
         var panel = new TaskPanel();
