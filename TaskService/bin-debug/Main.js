@@ -111,11 +111,10 @@ var Main = (function (_super) {
             this.addChild(SceneService.getInstance().monsterList[i]);
         }
         var panel = new TaskPanel();
-        panel.x = 0;
+        panel.x = 150;
         panel.y = 0;
         this.addChild(panel);
         TaskService.getInstance().addObserver(panel);
-        //var p:DialogPanel = new DialogPanel();
         this.addChild(NPCManager.getInstance().dialog);
     };
     p.createBitmapByName = function (name) {

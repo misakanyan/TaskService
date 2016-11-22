@@ -17,8 +17,14 @@ class SceneService{
     }
 
     init(){
-        this.monsterList.push(new Monster("monster_jpg"));
-        this.taskList.push(TaskService.getInstance().taskList[1]); //临时往里面塞一个任务触发用
+        var data = RES.getRes("gameconfig_json");
+        for(var i:number = 0;i<data.monsters.length;i++){
+            this.monsterList.push(new Monster(data.monsters[i].image,data.monsters[i].id,data.monsters[i].linkTaskId));
+            let task = TaskService.getInstance().taskList[data.monsters[i].linkTaskId];
+            this.taskList.push(task);
+        }
+        //this.monsterList.push(new Monster("monster_jpg","0","1"));
+        //this.taskList.push(TaskService.getInstance().taskList[1]); //临时往里面塞一个任务触发用
         for(var i:number = 0;i<this.monsterList.length;i++){
             this.observerList.push(this.monsterList[i]);
         }
@@ -34,9 +40,11 @@ class SceneService{
     }
 
     killMonster(id:string){
+        //console.log(id);
         for(var i:number = 0;i<this.monsterList.length;i++){
             if(this.monsterList[i].id == id){
                 this.monsterList[i].onSleep();
+                //console.log("make monster sleep");
             }
         }
     }
@@ -52,7 +60,16 @@ class SceneService{
     }
 
     accept(id:string){
-        this.notify(this.taskList[0]);  //这个是临时的任务
+        //console.log("accept monster:"+id);
+        for(var i:number = 0;i<this.taskList.length;i++){
+            if(this.taskList[i].id == id){
+                console.log("accept success");
+                let task = this.taskList[i];
+                this.notify(task);
+                break;
+            }
+        }
+        //this.notify(this.taskList[0]);  //这个是临时的任务
     }
 
     submit(id:string){
@@ -65,10 +82,12 @@ class Monster extends egret.DisplayObjectContainer implements SceneObserver{
 
     private _image:egret.Bitmap = new egret.Bitmap;
     private _id:string;
+    private _linkTaskId:string;
 
-    constructor(image:string){
+    constructor(image:string,id:string,taskId:string){
         super();
-        this._id = "0";
+        this._id = id;
+        this._linkTaskId = taskId;
         this._image.texture = RES.getRes(image);
         this.x = 200;
         this.y = 350;
@@ -81,8 +100,12 @@ class Monster extends egret.DisplayObjectContainer implements SceneObserver{
         return this._id;
     }
 
+    public get linkTaskId(){
+        return this._linkTaskId;
+    }
+
     private onClick(){
-        SceneService.getInstance().accept(this._id);
+        SceneService.getInstance().accept(this._linkTaskId);
     }
 
     onAwake(){

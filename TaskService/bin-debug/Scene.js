@@ -12,8 +12,14 @@ var SceneService = (function () {
         return SceneService.instance;
     };
     p.init = function () {
-        this.monsterList.push(new Monster("monster_jpg"));
-        this.taskList.push(TaskService.getInstance().taskList[1]); //临时往里面塞一个任务触发用
+        var data = RES.getRes("gameconfig_json");
+        for (var i = 0; i < data.monsters.length; i++) {
+            this.monsterList.push(new Monster(data.monsters[i].image, data.monsters[i].id, data.monsters[i].linkTaskId));
+            var task = TaskService.getInstance().taskList[data.monsters[i].linkTaskId];
+            this.taskList.push(task);
+        }
+        //this.monsterList.push(new Monster("monster_jpg","0","1"));
+        //this.taskList.push(TaskService.getInstance().taskList[1]); //临时往里面塞一个任务触发用
         for (var i = 0; i < this.monsterList.length; i++) {
             this.observerList.push(this.monsterList[i]);
         }
@@ -27,6 +33,7 @@ var SceneService = (function () {
         }
     };
     p.killMonster = function (id) {
+        //console.log(id);
         for (var i = 0; i < this.monsterList.length; i++) {
             if (this.monsterList[i].id == id) {
                 this.monsterList[i].onSleep();
@@ -42,7 +49,16 @@ var SceneService = (function () {
         }
     };
     p.accept = function (id) {
-        this.notify(this.taskList[0]); //这个是临时的任务
+        //console.log("accept monster:"+id);
+        for (var i = 0; i < this.taskList.length; i++) {
+            if (this.taskList[i].id == id) {
+                console.log("accept success");
+                var task = this.taskList[i];
+                this.notify(task);
+                break;
+            }
+        }
+        //this.notify(this.taskList[0]);  //这个是临时的任务
     };
     p.submit = function (id) {
     };
@@ -51,10 +67,11 @@ var SceneService = (function () {
 egret.registerClass(SceneService,'SceneService');
 var Monster = (function (_super) {
     __extends(Monster, _super);
-    function Monster(image) {
+    function Monster(image, id, taskId) {
         _super.call(this);
         this._image = new egret.Bitmap;
-        this._id = "0";
+        this._id = id;
+        this._linkTaskId = taskId;
         this._image.texture = RES.getRes(image);
         this.x = 200;
         this.y = 350;
@@ -68,8 +85,13 @@ var Monster = (function (_super) {
             return this._id;
         }
     );
+    d(p, "linkTaskId"
+        ,function () {
+            return this._linkTaskId;
+        }
+    );
     p.onClick = function () {
-        SceneService.getInstance().accept(this._id);
+        SceneService.getInstance().accept(this._linkTaskId);
     };
     p.onAwake = function () {
         this.addChild(this._image);

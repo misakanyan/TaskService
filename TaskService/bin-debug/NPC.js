@@ -39,9 +39,6 @@ var NPC = (function (_super) {
         //this.addChild(this._tachie);
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onClick, this);
         this.touchEnabled = true;
-        //console.log("this:"+this.x+","+this.y);
-        //console.log("bitmap:"+this._bitmap.x+","+this._bitmap.y);
-        //console.log("emoji:"+this._emoji.x+","+this._emoji.y);
     }
     var d = __define,c=NPC,p=c.prototype;
     d(p, "id"
@@ -97,12 +94,6 @@ var NPC = (function (_super) {
     return NPC;
 }(egret.DisplayObjectContainer));
 egret.registerClass(NPC,'NPC',["Observer"]);
-var EmojiStatus;
-(function (EmojiStatus) {
-    EmojiStatus[EmojiStatus["EMPTY"] = 0] = "EMPTY";
-    EmojiStatus[EmojiStatus["QUESTION"] = 1] = "QUESTION";
-    EmojiStatus[EmojiStatus["EXCLAMATION"] = 2] = "EXCLAMATION";
-})(EmojiStatus || (EmojiStatus = {}));
 var NPCManager = (function () {
     function NPCManager() {
         this.NPCList = [];
@@ -136,4 +127,10 @@ var NPCManager = (function () {
     return NPCManager;
 }());
 egret.registerClass(NPCManager,'NPCManager');
+var EmojiStatus;
+(function (EmojiStatus) {
+    EmojiStatus[EmojiStatus["EMPTY"] = 0] = "EMPTY";
+    EmojiStatus[EmojiStatus["QUESTION"] = 1] = "QUESTION";
+    EmojiStatus[EmojiStatus["EXCLAMATION"] = 2] = "EXCLAMATION";
+})(EmojiStatus || (EmojiStatus = {}));
 //# sourceMappingURL=NPC.js.map

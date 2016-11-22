@@ -9,18 +9,20 @@
             "fromNpcId": "npc_0",
             "toNpcId": "npc_1",
             "current": 0,
-            "total": 4
+            "total": 10,
+            "nextTaskId":"1"
         },
         {
             "id": "1",
-            "name": "干掉十个敌人",
+            "name": "前往西山",
             "type":"killMonster",
             "status": 0,
-            "desc": "前往西山，点击下方图片十次",
+            "desc": "点击下方图片十次",
             "fromNpcId": "npc_0",
             "toNpcId": "npc_1",
             "current": 0,
-            "total": 10
+            "total": 10,
+            "nextTaskId":null
         }
     ],
     "npcs": [
@@ -41,6 +43,13 @@
             "tachie": "npc_1_tachie_jpg",
             "x": 25,
             "y": 225
+        }
+    ],
+    "monsters":[
+        {
+            "id":"0",
+            "linkTaskId":"1",
+            "image":"monster_jpg"
         }
     ]
 }

@@ -6,7 +6,7 @@
             "tachie": "npc_0_tachie_png",
             "side": "right",
             "taskId": 0,
-            "content": "艾基尔，龙血药剂不够了，你那儿还有存货吗？"
+            "content": "艾基尔，我接了个大单子，要一块秘银。你那儿还有存货吗？"
         },
         {
             "id": 2,
@@ -14,7 +14,7 @@
             "tachie": "npc_1_tachie_png",
             "side": "left",
             "taskId": 0,
-            "content": "真不凑巧，刚卖完……不过我下午要去一趟西山，顺便帮你打点回来吧。"
+            "content": "真不凑巧，没有……"
         },
         {
             "id": 3,
@@ -22,7 +22,7 @@
             "tachie": "npc_0_tachie_png",
             "side": "right",
             "taskId": 0,
-            "content": "喔~那不是最前线的55层吗？你这个整天挥舞大锤的商人没问题吗？"
+            "content": "说了这是个大单子哦！卖我一块2000珂尔，如何？"
         },
         {
             "id": 4,
@@ -30,7 +30,55 @@
             "tachie": "npc_1_tachie_png",
             "side": "left",
             "taskId": 0,
-            "content": "不是大锤，是巨斧，别小瞧我啊。"
+            "content": "真的没有……那个很稀有啊！"
+        },
+        {
+            "id": 5,
+            "actorName": "Lisbeth",
+            "tachie": "npc_0_tachie_png",
+            "side": "right",
+            "taskId": 0,
+            "content": "好吧好吧，那你告诉我哪儿的怪掉这素材。"
+        },
+        {
+            "id": 6,
+            "actorName": "Agil",
+            "tachie": "npc_1_tachie_png",
+            "side": "left",
+            "taskId": 0,
+            "content": "情报上说只在最前线第55层的冰龙巢穴有产出。"
+        },
+        {
+            "id": 7,
+            "actorName": "Lisbeth",
+            "tachie": "npc_0_tachie_png",
+            "side": "right",
+            "taskId": 0,
+            "content": "…………"
+        },
+        {
+            "id": 8,
+            "actorName": "Agil",
+            "tachie": "npc_1_tachie_png",
+            "side": "left",
+            "taskId": 0,
+            "content": "…………"
+        },
+        {
+            "id": 9,
+            "actorName": "Lisbeth",
+            "tachie": "npc_0_tachie_png",
+            "side": "right",
+            "taskId": 0,
+            "content": "好啦好啦！我去就是啦！"
+        },
+        {
+            "id": 10,
+            "actorName": "Agil",
+            "tachie": "npc_1_tachie_png",
+            "side": "left",
+            "taskId": 0,
+            "content": "喂！等我一下！我也去！"
         }
     ]
 }

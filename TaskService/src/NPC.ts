@@ -9,7 +9,7 @@ class NPC extends egret.DisplayObjectContainer implements Observer {
 
     //private dialog: DialogPanel = new DialogPanel();
 
-    constructor(id: string, name: string, bitmap: string, emoji: EmojiStatus, tachie:string,x: number, y: number) {
+    constructor(id: string, name: string, bitmap: string, emoji: EmojiStatus, tachie: string, x: number, y: number) {
         super();
         this._id = id;
         this._name = name;
@@ -41,16 +41,6 @@ class NPC extends egret.DisplayObjectContainer implements Observer {
         //this.addChild(this._tachie);
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onClick, this);
         this.touchEnabled = true;
-
-
-
-
-
-        //console.log("this:"+this.x+","+this.y);
-        //console.log("bitmap:"+this._bitmap.x+","+this._bitmap.y);
-        //console.log("emoji:"+this._emoji.x+","+this._emoji.y);
-
-
 
     }
 
@@ -97,7 +87,7 @@ class NPC extends egret.DisplayObjectContainer implements Observer {
 
     private onClick() {
         for (var i: number = 0; i < this._taskList.length; i++) {
-            console.log("taskId: "+this._taskList[i].id+" status: "+this._taskList[i].status);
+            console.log("taskId: " + this._taskList[i].id + " status: " + this._taskList[i].status);
             if (this._taskList[i].status == TaskStatus.ACCEPTABLE) {
                 TaskService.getInstance().accept(this._taskList[i].id);
                 NPCManager.getInstance().openDialog(this._taskList[i].id);
@@ -112,22 +102,14 @@ class NPC extends egret.DisplayObjectContainer implements Observer {
 
 }
 
-enum EmojiStatus {
-
-    EMPTY,
-    QUESTION,
-    EXCLAMATION
-
-}
-
-class NPCManager{
+class NPCManager {
 
     NPCList: NPC[] = [];
     private static instance;
-    dialog:DialogPanel= new DialogPanel();
+    dialog: DialogPanel = new DialogPanel();
 
-    static getInstance(){
-         if (NPCManager.instance == null) {
+    static getInstance() {
+        if (NPCManager.instance == null) {
             NPCManager.instance = new NPCManager;
         }
         return NPCManager.instance;
@@ -137,23 +119,38 @@ class NPCManager{
         //this.dialog = new DialogPanel();
         var data = RES.getRes("gameconfig_json");
         for (var i: number = 0; i < data.npcs.length; i++) {
-            var npc = new NPC(data.npcs[i].id, data.npcs[i].name, data.npcs[i].bitmap, data.npcs[i].emoji,data.npcs[i].tachie, data.npcs[i].x, data.npcs[i].y);
+            var npc = new NPC(data.npcs[i].id,
+                data.npcs[i].name,
+                data.npcs[i].bitmap,
+                data.npcs[i].emoji,
+                data.npcs[i].tachie,
+                data.npcs[i].x,
+                data.npcs[i].y
+            );
             this.NPCList.push(npc);
             //console.log("init npc");
         }
     }
 
-    openDialog(taskId){
-        this.dialog.onAwake(taskId);       
+    openDialog(taskId) {
+        this.dialog.onAwake(taskId);
         console.log("NPCManager onClick");
     }
 
-    changeDialog(){
+    changeDialog() {
         this.dialog.onChange();
     }
 
-    closeDialog(){
+    closeDialog() {
         this.dialog.onSleep();
     }
+
+}
+
+enum EmojiStatus {
+
+    EMPTY,
+    QUESTION,
+    EXCLAMATION
 
 }

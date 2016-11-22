@@ -91,8 +91,8 @@ var Task = (function () {
             this._status = TaskStatus.CAN_SUBMIT;
             //console.log(this._status);
             TaskService.getInstance().submit(this._id);
-            TaskService.getInstance().enforceAccept("1"); //临时代码 用于启动下一个任务
-            SceneService.getInstance().wakeUpMonster("0"); //临时代码 用于唤醒怪物
+            TaskService.getInstance().enforceAccept("1"); //用于启动下一个任务
+            SceneService.getInstance().wakeUpMonster("0"); //用于唤醒怪物
             NPCManager.getInstance().closeDialog();
             console.log("submitted");
         }
@@ -103,7 +103,7 @@ var Task = (function () {
             this._status = TaskStatus.CAN_SUBMIT;
             //console.log(this._status);
             TaskService.getInstance().submit(this._id);
-            SceneService.getInstance().killMonster("0"); //临时代码 用于清除怪物
+            SceneService.getInstance().killMonster("0"); //用于清除怪物
             console.log("submitted");
         }
     };
@@ -373,7 +373,7 @@ var DialogPanel = (function (_super) {
         this.desc.type = egret.TextFieldType.DYNAMIC;
         this.desc.lineSpacing = 6;
         this.desc.multiline = true;
-        this.charaName.text = "Lizbeth";
+        this.charaName.text = "Lisbeth";
         this.charaName.size = 18;
         this.charaName.fontFamily = "微软雅黑";
         this.charaName.anchorOffsetX = this.charaName.width / 2;
@@ -382,8 +382,8 @@ var DialogPanel = (function (_super) {
         this.charaName.y = 394;
         this.anchorOffsetX = this.width / 2;
         this.anchorOffsetY = this.height / 2;
-        //this.x = 250;
-        //this.y = 250;
+        //this.x = 150;
+        //this.y = 0;
         //console.log("Dialog Panel button x: "+this.button.x+"y: "+this.button.y);
         this.touchEnabled = true;
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onClick, this);
